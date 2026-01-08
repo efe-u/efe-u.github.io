@@ -1,88 +1,33 @@
-<!-- This is the location from which the webpage will be served. 
-Start here to edit personal info and move onto styling afterwards -->
-
-<!-- To preview the site before pushing, we host on local. I personally
-use: https://www.npmjs.com/package/http-server -->
-
 <!DOCTYPE html>
-<html lang="en-US" class="no-js no-svg"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="styles/default_style.css" />
-	<link rel="stylesheet" type="text/css" href="styles/custom_additions.css" />
-    <script src="script.js" defer></script>
-	<!-- ADD A CUSTOM IMAGE HERE -->
-    <link rel="icon" href="images/algo_group_logo.jpg">
-	<title>Nusret Efe Ucer</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efe Ucer</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
-
-<body class="home page-template-default page page-id-6">
-<div id="page" class="site">
-
-<div class="fade-in-image">
-
-<div class="portfolio-title-section">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-3"></div>
-			<!-- ADD YOUR NAME HERE -->
-			<div class="col-md-6"><div class="title-wrap"><h2>Nusret Efe Ucer</h2></div></div>
-			<div class="col-md-3"></div>
-		</div>
-	</div>
-</div>
-
-<div id="content" class="site-content">
-<div class="container">
-<div class="row">
-<div class="col-lg-12">
-<div id="primary" class="content-area">
-<main id="main" class="site-main">
-<article id="post-6" class="post-6 page type-page status-publish hentry">
-
-<!-- BUTTONS ARE BELOW, EDIT LINKS AND SUCH HERE -->
-<div class="entry-content">
-<div class="btn-group">
-
-	<!-- RESUME BUTTON -->
-	<button title="Resume" onmouseover="hover('resume')" onmouseout="gone('resume')"
-	onclick="window.open('./resume.pdf', '_blank')" 
-	class="button button5" style="width:175px;height:140px;">
-		<img id="resume" src="images/resume-colored.png" alt="GitHub" style="width:50px;height:50px;">
-	</button>
-
-	<!-- EMAIL BUTTON -->
-	<button title="Mail" onmouseover="hover('mail')" onmouseout="gone('mail')" 
-	onclick="window.open('mailto:efeucer@uchicago.edu', '_blank')" 
-	class="button button5" style="width:175px;height:140px;"> 
-		<img id="mail" src="images/mail-colored.png" alt="CV" style="width:50px;height:50px;">
-	</button>
-
-</div>
-<div class="btn-group">
-
-	<!-- LINKEDIN BUTTON -->
-	<button title="LinkedIn" onmouseover="hover('linkedin')" onmouseout="gone('linkedin')" 
-	onclick="window.open('https://www.linkedin.com/in/nusret-efe-ucer-868296243/', '_blank')" 
-	class="button button5" style="width:175px;height:140px;">
-		<img id="linkedin" src="images/linkedin-colored.png" class="" alt="GitHub" style="width:24px;height:24px;">
-	</button>
-
-	<!-- GITHUB BUTTON -->
-	<button title="GitHub" onmouseover="hover('github')" onmouseout="gone('github')" 
-	onclick="window.open('https://github.com/efe-u', '_blank')" 
-	class="button button5" style="width:175px;height:140px;">
-		<img id="github" src="images/github-colored.png" class="github-icon" alt="GitHub" style="width:50px;height:50px;">
-	</button>
-
-</div>
-</div>
-</div>
-</article>
-</main>
-</div>
-</div>
-</div>
-</div>
-</div>
-					
+<body>
+    <div class="terminal-container">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span class="btn-close"></span>
+                    <span class="btn-minimize"></span>
+                    <span class="btn-maximize"></span>
+                </div>
+                <div class="terminal-title">Nusret Efe Ucer's Personal Website — zsh — 80×24</div>
+                <div class="terminal-spacer"></div>
+            </div>
+            <div class="terminal-panes">
+                <div class="terminal-pane active" id="terminal">
+                    <!-- Main terminal content -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

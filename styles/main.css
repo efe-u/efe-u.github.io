@@ -1,0 +1,374 @@
+/* ===== CSS Variables ===== */
+:root {
+    --terminal-bg: #0c0c0c;
+    --terminal-header: #1a1a1a;
+    --terminal-border: #2a2a2a;
+    
+    --text-primary: #d4d4d4;
+    --text-bright: #ffffff;
+    --text-muted: #6a6a6a;
+    
+    --accent: #4a9eff;
+    --accent-bright: #6eb5ff;
+    
+    --btn-close: #ff5f56;
+    --btn-minimize: #ffbd2e;
+    --btn-maximize: #27c93f;
+    
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Menlo', monospace;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: var(--font-mono);
+    background: var(--terminal-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Terminal Container ===== */
+.terminal-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== Terminal Window ===== */
+.terminal-window {
+    background: var(--terminal-bg);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== Terminal Header ===== */
+.terminal-header {
+    background: var(--terminal-header);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--terminal-border);
+}
+
+.terminal-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.terminal-buttons span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.btn-close {
+    background: var(--btn-close);
+}
+
+.btn-minimize {
+    background: var(--btn-minimize);
+}
+
+.btn-maximize {
+    background: var(--btn-maximize);
+}
+
+.terminal-title {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.terminal-spacer {
+    width: 52px;
+}
+
+/* ===== Terminal Panes ===== */
+.terminal-panes {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.terminal-pane {
+    flex: 1;
+    padding: 1.5rem 2rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    overflow-y: auto;
+    font-family: var(--font-mono);
+}
+
+.terminal-pane:not(:last-child) {
+    border-right: 1px solid #2a2a2a;
+}
+
+/* ===== Right Pane with Programs ===== */
+.right-pane {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+
+/* ===== Program Panels ===== */
+.program-panel {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #2a2a2a;
+    transition: flex 0.3s ease;
+}
+
+.program-panel.collapsed {
+    flex: 0 0 auto;
+}
+
+.program-panel.expanded {
+    flex: 1;
+}
+
+.program-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: #1a1a1a;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.program-header:hover {
+    background: #222222;
+}
+
+.program-title {
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+}
+
+.program-title::before {
+    content: '▶ ';
+    font-size: 0.7rem;
+}
+
+.program-panel.expanded .program-title::before {
+    content: '▼ ';
+}
+
+.program-status {
+    color: #444444;
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+}
+
+.program-content {
+    padding: 1rem 1.5rem;
+    overflow-y: auto;
+    display: none;
+    flex: 1;
+}
+
+.program-panel.expanded .program-content {
+    display: block;
+}
+
+/* ===== Terminal Lines ===== */
+.terminal-line {
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+}
+
+.prompt-user {
+    color: var(--accent);
+}
+
+.prompt-at {
+    color: var(--text-muted);
+}
+
+.prompt-host {
+    color: var(--accent);
+}
+
+.prompt-path {
+    color: var(--text-muted);
+}
+
+.prompt-symbol {
+    color: var(--text-primary);
+}
+
+.command {
+    color: var(--text-bright);
+}
+
+.output {
+    color: var(--text-primary);
+}
+
+
+/* ===== Links ===== */
+.link {
+    color: #888888;
+    text-decoration: none;
+    font-family: var(--font-mono);
+}
+
+.link:hover {
+    color: var(--text-bright);
+    text-decoration: underline;
+}
+
+/* ===== Project Listing ===== */
+.ls-output {
+    margin-top: 0.25rem;
+    color: #888888;
+}
+
+.project-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.project-link:hover {
+    color: var(--accent-bright);
+    text-decoration: underline;
+}
+
+/* ===== Input Line ===== */
+.input-line {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-mono);
+}
+
+.input-line input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-bright);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    flex: 1;
+    caret-color: var(--text-primary);
+}
+
+.input-line input::placeholder {
+    color: transparent;
+}
+
+/* ===== Cursor ===== */
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.1em;
+    background: var(--text-primary);
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* ===== Error ===== */
+.error {
+    color: #ff6b6b;
+}
+
+/* ===== Help Commands ===== */
+.cmd {
+    color: #cccccc;
+}
+
+.cmd-desc {
+    color: #555555;
+}
+
+/* ===== Hints and Comments ===== */
+.hint {
+    color: #555555;
+}
+
+.hint-link {
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.hint-link:hover {
+    color: var(--accent-bright);
+}
+
+.comment {
+    color: #555555;
+}
+
+/* ===== Tab Complete ===== */
+.tab-complete {
+    color: var(--text-muted);
+}
+
+.tab-hint {
+    color: var(--text-muted);
+}
+
+/* ===== Experiences Tree Styling ===== */
+.exp-tree-title {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.exp-company {
+    color: #cccccc;
+}
+
+.exp-role {
+    color: var(--accent);
+}
+
+.exp-date {
+    color: #555555;
+}
+
+.exp-detail {
+    color: #888888;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+    .terminal-body {
+        font-size: 0.85rem;
+        padding: 1rem 1.25rem;
+    }
+    
+    .terminal-title {
+        font-size: 0.7rem;
+    }
+    
+    .input-line input {
+        font-size: 0.85rem;
+    }
+}
