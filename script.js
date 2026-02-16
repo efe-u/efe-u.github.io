@@ -1,22 +1,19 @@
-let activePane = 'terminal';
-let programs = {}; // Store launched programs
+// =============================================================
+// DATA
+// =============================================================
 
-const typeSpeed = 35;
-const lineDelay = 250;
-
-// Project data
 const projects = {
     'handsin': {
         desc: 'Sign-language conversational AI system — HackTech 2025 @ Caltech',
-        link: 'https://devpost.com/software/handsin'
+        link: 'https://github.com/efe-u'
     },
     'r19q-mutation': {
         desc: 'Molecular dynamics simulation analyzing SBDS protein mutation',
-        link: 'https://github.com/efe-u/R19Q-Mutation-in-the-2L9N-SBDS-Protein/blob/main/R19Q-Mutation-in-the-2L9N-SBDS-Protein.pdf'
+        link: 'https://github.com/efe-u'
     },
     'tennis-motion-ai': {
         desc: 'AI-driven motion analysis system for tennis @ TU Dortmund',
-        link: 'https://github.com/efe-u/AI_Tennis_Coach'
+        link: 'https://github.com/efe-u'
     }
 };
 
@@ -25,7 +22,6 @@ const links = {
     linkedin: 'https://www.linkedin.com/in/nusret-efe-ucer-868296243/'
 };
 
-// Experiences data
 const experiences = [
     {
         company: 'G LNK (YC W25)',
@@ -33,7 +29,7 @@ const experiences = [
         date: 'June 2025 – Present',
         details: [
             'Built company database from zero — unified 300+ gov healthcare datasets',
-            'Transformed 10⁹+ raw records into 10⁷-scale Elasticsearch/Databricks/MongoDB',
+            'Transformed 10\u2079+ raw records into 10\u2077-scale Elasticsearch/Databricks/MongoDB',
             'Engineered client-facing ETL pipeline — scaled to ~92% global market coverage',
             'Built full-stack search & analytics system with multi-criteria filtering'
         ]
@@ -49,7 +45,7 @@ const experiences = [
         ]
     },
     {
-        company: 'Technische Universität Dortmund',
+        company: 'Technische Universit\u00e4t Dortmund',
         role: 'Research Assistant',
         date: 'July 2023 – September 2023',
         details: [
@@ -69,520 +65,469 @@ const experiences = [
     }
 ];
 
-// Skills data for another program
 const skills = {
     'Languages': ['Python', 'C', 'Java', 'R', 'JavaScript', 'HTML/CSS', 'Tcl/Tk'],
-    'Frameworks/Tools': ['Flask', 'Node.js', 'Nest.js', 'Streamlit', 'Git', 'Azure', 'GCP', 'Firebase'],
-    'Databases/Platforms': ['Azure SQL', 'Databricks', 'MongoDB', 'Elasticsearch', 'OpenAI APIs', 'Vertex AI']
+    'Frameworks & Tools': ['Flask', 'Node.js', 'Nest.js', 'Streamlit', 'Git', 'Azure', 'GCP', 'Firebase'],
+    'Databases & Platforms': ['Azure SQL', 'Databricks', 'MongoDB', 'Elasticsearch', 'OpenAI APIs', 'Vertex AI']
 };
 
-// Virtual file system
 const files = {
-    'description.txt': `B.S./M.S. Computer Science @ University of Chicago | GPA: 3.818 | June 2028
-Interested in large-scale data platforms, AI-driven systems, and distributed infrastructure.`,
-    'links.txt': `<a href="${links.github}" target="_blank" class="link">github.com/efe-u</a>
-<a href="${links.linkedin}" target="_blank" class="link">linkedin.com/in/nusret-efe-ucer</a>
-<a href="mailto:efeucer@uchicago.edu" class="link">efeucer@uchicago.edu</a>`
+    'description.txt': 'B.S./M.S. Computer Science @ University of Chicago | GPA: 3.818 | June 2028\nInterested in large-scale data platforms, AI-driven systems, and distributed infrastructure.',
+    'links.txt': '<a href="' + links.github + '" target="_blank" class="link">github.com/efe-u</a>\n<a href="' + links.linkedin + '" target="_blank" class="link">linkedin.com/in/nusret-efe-ucer</a>\n<a href="mailto:efeucer@uchicago.edu" class="link">efeucer@uchicago.edu</a>'
 };
 
-function getActiveTerminal() {
-    if (activePane === 'terminal') {
-        return document.getElementById('terminal');
-    }
-    const activeProgram = programs[activePane];
-    if (activeProgram) {
-        return activeProgram.content;
-    }
-    return document.getElementById('terminal');
+// =============================================================
+// STATE
+// =============================================================
+
+const openWindows = {};
+let currentContentId = null;
+let zCounter = 10;
+let activitiesOpen = false;
+let terminalInitDone = false;
+let terminalEl = null;
+
+const windowConfigs = {
+    terminal: { title: 'Terminal', type: 'terminal' },
+    about:    { title: 'About Me', type: 'content' },
+    projects: { title: 'Projects', type: 'content' },
+    experience: { title: 'Experience', type: 'content' },
+    skills:   { title: 'Skills', type: 'content' },
+    links:    { title: 'Links', type: 'content' }
+};
+
+// =============================================================
+// CLOCK
+// =============================================================
+
+function updateClock() {
+    const now = new Date();
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const h = now.getHours().toString().padStart(2, '0');
+    const m = now.getMinutes().toString().padStart(2, '0');
+    const el = document.getElementById('clock');
+    if (el) el.textContent = days[now.getDay()] + ' ' + months[now.getMonth()] + ' ' + now.getDate() + '  ' + h + ':' + m;
 }
 
-function createPrompt(pane = 'main') {
-    if (pane !== 'main' && pane !== 'terminal') {
-        return `<span class="prompt-user">efe</span><span class="prompt-at">@</span><span class="prompt-host">macbook</span> <span class="prompt-path">~/${pane}</span> <span class="prompt-symbol">%</span>&nbsp;`;
+// =============================================================
+// WINDOW MANAGER
+// =============================================================
+
+function openWindow(id) {
+    if (activitiesOpen) toggleActivities();
+
+    const config = windowConfigs[id];
+    if (!config) return;
+
+    if (id === 'terminal') {
+        if (openWindows.terminal) {
+            focusWindow('terminal');
+            return;
+        }
+        const win = createWindowEl(id, config);
+        document.getElementById('windowsLayer').appendChild(win);
+        openWindows.terminal = { element: win };
+        focusWindow('terminal');
+
+        terminalEl = win.querySelector('#terminal');
+        if (!terminalInitDone) {
+            terminalInitDone = true;
+            setTimeout(runInitSequence, 500);
+        } else {
+            createInputLine();
+        }
+        return;
     }
-    return `<span class="prompt-user">efe</span><span class="prompt-at">@</span><span class="prompt-host">macbook</span> <span class="prompt-path">~</span> <span class="prompt-symbol">%</span>&nbsp;`;
+
+    // Content window — close previous one
+    if (currentContentId && openWindows[currentContentId]) {
+        const prev = openWindows[currentContentId];
+        prev.element.remove();
+        delete openWindows[currentContentId];
+    }
+
+    const win = createWindowEl(id, config);
+    document.getElementById('windowsLayer').appendChild(win);
+    openWindows[id] = { element: win };
+    currentContentId = id;
+    focusWindow(id);
+
+    const body = win.querySelector('.window-body');
+    renderWindowContent(id, body);
 }
 
-function createLine(content, className = '') {
-    const line = document.createElement('div');
-    line.className = `terminal-line ${className}`;
+function closeWindow(id) {
+    const win = openWindows[id];
+    if (!win) return;
+
+    win.element.classList.add('closing');
+    setTimeout(() => {
+        win.element.remove();
+        delete openWindows[id];
+        if (id === 'terminal') {
+            terminalEl = null;
+        }
+        if (id === currentContentId) {
+            currentContentId = null;
+        }
+    }, 200);
+}
+
+function focusWindow(id) {
+    const win = openWindows[id];
+    if (!win) return;
+    zCounter++;
+    win.element.style.zIndex = zCounter;
+}
+
+function createWindowEl(id, config) {
+    const win = document.createElement('div');
+    const typeClass = config.type === 'terminal' ? 'window-terminal' : 'window-content';
+    win.className = 'window ' + typeClass;
+    win.dataset.windowId = id;
+    win.style.zIndex = ++zCounter;
+
+    const bodyInner = id === 'terminal' ? '<div class="terminal-pane" id="terminal"></div>' : '';
+
+    win.innerHTML =
+        '<div class="window-header" onmousedown="focusWindow(\'' + id + '\')">' +
+            '<span class="window-title">' + config.title + '</span>' +
+            '<button class="window-close" onclick="event.stopPropagation(); closeWindow(\'' + id + '\')">' +
+                '<svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+            '</button>' +
+        '</div>' +
+        '<div class="window-body">' + bodyInner + '</div>';
+
+    win.addEventListener('mousedown', function() { focusWindow(id); });
+    return win;
+}
+
+// =============================================================
+// CONTENT RENDERERS
+// =============================================================
+
+function renderWindowContent(id, body) {
+    const renderers = {
+        about: renderAbout,
+        projects: renderProjects,
+        experience: renderExperience,
+        skills: renderSkills,
+        links: renderLinks
+    };
+    if (renderers[id]) {
+        body.innerHTML = '<div class="content-body">' + renderers[id]() + '</div>';
+    }
+}
+
+function renderAbout() {
+    return '' +
+        '<div class="about-header">' +
+            '<img class="about-avatar" src="profile.jpg" alt="NEU" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="about-avatar about-avatar-fallback" style="display:none">NEU</div>' +
+            '<div>' +
+                '<h1 class="about-name">Nusret Efe Ucer</h1>' +
+                '<p class="about-tagline">B.S./M.S. Computer Science</p>' +
+                '<p class="about-meta">University of Chicago | GPA: 3.818 | Expected June 2028</p>' +
+            '</div>' +
+        '</div>' +
+        '<p class="about-bio">Interested in building large-scale data platforms, AI-driven systems, and distributed infrastructure.</p>' +
+        '<h2 class="section-heading">Current Roles</h2>' +
+        '<div class="about-roles">' +
+            '<div class="role-card">' +
+                '<span class="role-title">ML Engineer (Part-Time) / ML Engineering Intern</span>' +
+                '<span class="role-org">G LNK (YC W25)</span>' +
+                '<span class="role-period">June 2025 – Present</span>' +
+            '</div>' +
+            '<div class="role-card">' +
+                '<span class="role-title">Ground Station Software Engineer</span>' +
+                '<span class="role-org">UChicago PULSE-A</span>' +
+                '<span class="role-period">October 2024 – Present</span>' +
+            '</div>' +
+            '<div class="role-card">' +
+                '<span class="role-title">AI/ML Committee Co-director</span>' +
+                '<span class="role-org">UChicago ACM</span>' +
+                '<span class="role-period">October 2024 – Present</span>' +
+            '</div>' +
+        '</div>';
+}
+
+function renderProjects() {
+    var cards = '';
+    Object.entries(projects).forEach(function(entry) {
+        var name = entry[0], proj = entry[1];
+        cards +=
+            '<div class="project-card" onclick="window.open(\'' + proj.link + '\', \'_blank\')">' +
+                '<h3 class="project-name">' + name + '</h3>' +
+                '<p class="project-desc">' + proj.desc + '</p>' +
+                '<span class="project-link">View Project \u2192</span>' +
+            '</div>';
+    });
+    return '<div class="projects-grid">' + cards + '</div>';
+}
+
+function renderExperience() {
+    var items = '';
+    experiences.forEach(function(exp) {
+        var bullets = exp.details.map(function(d) { return '<li>' + d + '</li>'; }).join('');
+        items +=
+            '<div class="timeline-item">' +
+                '<div class="timeline-marker"></div>' +
+                '<div class="timeline-content">' +
+                    '<h3>' + exp.company + '</h3>' +
+                    '<p class="timeline-role">' + exp.role + '</p>' +
+                    '<p class="timeline-date">' + exp.date + '</p>' +
+                    '<ul>' + bullets + '</ul>' +
+                '</div>' +
+            '</div>';
+    });
+    return '<div class="timeline">' + items + '</div>';
+}
+
+function renderSkills() {
+    var groups = '';
+    Object.entries(skills).forEach(function(entry) {
+        var category = entry[0], items = entry[1];
+        var chipHtml = items.map(function(item) { return '<span class="chip">' + item + '</span>'; }).join('');
+        groups +=
+            '<div class="skills-group">' +
+                '<h3>' + category + '</h3>' +
+                '<div class="chips">' + chipHtml + '</div>' +
+            '</div>';
+    });
+    return groups;
+}
+
+function renderLinks() {
+    return '' +
+        '<div class="links-list">' +
+            '<a href="' + links.github + '" target="_blank" class="link-card">' +
+                '<div class="link-icon-box">GH</div>' +
+                '<div><div class="link-title">GitHub</div><div class="link-url">github.com/efe-u</div></div>' +
+            '</a>' +
+            '<a href="' + links.linkedin + '" target="_blank" class="link-card">' +
+                '<div class="link-icon-box">IN</div>' +
+                '<div><div class="link-title">LinkedIn</div><div class="link-url">linkedin.com/in/nusret-efe-ucer</div></div>' +
+            '</a>' +
+            '<a href="mailto:efeucer@uchicago.edu" class="link-card">' +
+                '<div class="link-icon-box">@</div>' +
+                '<div><div class="link-title">Email</div><div class="link-url">efeucer@uchicago.edu</div></div>' +
+            '</a>' +
+        '</div>';
+}
+
+// =============================================================
+// ACTIVITIES
+// =============================================================
+
+function toggleActivities() {
+    var overlay = document.getElementById('activitiesOverlay');
+    activitiesOpen = !activitiesOpen;
+
+    if (activitiesOpen) {
+        renderActivities();
+        overlay.classList.add('active');
+    } else {
+        overlay.classList.remove('active');
+    }
+}
+
+function renderActivities() {
+    var container = document.getElementById('activitiesContent');
+    var windowEls = document.querySelectorAll('#windowsLayer .window');
+
+    var html = '<h2 class="activities-title">Open Windows</h2><div class="activities-grid">';
+
+    if (windowEls.length === 0) {
+        html += '<p class="activities-empty">No open windows. Click a dock icon to get started.</p>';
+    } else {
+        windowEls.forEach(function(w) {
+            var id = w.dataset.windowId;
+            var title = w.querySelector('.window-title').textContent;
+            html +=
+                '<div class="activity-card" onclick="focusWindow(\'' + id + '\'); toggleActivities();">' +
+                    '<span class="activity-card-title">' + title + '</span>' +
+                '</div>';
+        });
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function handleActivitiesClick(event) {
+    if (event.target === event.currentTarget) {
+        toggleActivities();
+    }
+}
+
+// =============================================================
+// TERMINAL
+// =============================================================
+
+var typeSpeed = 35;
+var lineDelay = 250;
+
+function createPrompt() {
+    return '<span class="prompt-user">efe</span><span class="prompt-at">@</span><span class="prompt-host">macbook</span> <span class="prompt-path">~</span> <span class="prompt-symbol">%</span>&nbsp;';
+}
+
+function createLine(content, className) {
+    var line = document.createElement('div');
+    line.className = 'terminal-line' + (className ? ' ' + className : '');
     line.innerHTML = content;
     return line;
 }
 
-function addOutput(html, className = 'output', targetPane = null) {
-    const pane = targetPane || getActiveTerminal();
-    const line = createLine(html, className);
+function addOutput(html, className, target) {
+    var pane = target || terminalEl;
+    if (!pane) return;
+    var line = createLine(html, className || 'output');
     pane.appendChild(line);
     scrollToBottom(pane);
 }
 
-function scrollToBottom(pane = null) {
-    const target = pane || getActiveTerminal();
-    target.scrollTop = target.scrollHeight;
+function scrollToBottom(target) {
+    var el = target || terminalEl;
+    if (el) el.scrollTop = el.scrollHeight;
 }
 
-async function typeText(element, text) {
-    for (let i = 0; i < text.length; i++) {
-        element.textContent += text[i];
-        await sleep(typeSpeed + Math.random() * 20);
-    }
+function typeText(element, text) {
+    return new Promise(function(resolve) {
+        var i = 0;
+        function next() {
+            if (i < text.length) {
+                element.textContent += text[i];
+                i++;
+                setTimeout(next, typeSpeed + Math.random() * 20);
+            } else {
+                resolve();
+            }
+        }
+        next();
+    });
 }
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(function(resolve) { setTimeout(resolve, ms); });
 }
 
-function switchPane(paneId) {
-    activePane = paneId;
-    
-    // Focus input in active pane
-    const activeTerminal = getActiveTerminal();
-    const input = activeTerminal?.querySelector('input');
-    if (input) input.focus();
-}
-
-function expandProgram(programId) {
-    const prog = programs[programId];
-    if (!prog) return;
-    
-    // If already expanded, collapse it
-    if (prog.panel.classList.contains('expanded')) {
-        prog.panel.classList.remove('expanded');
-        prog.panel.classList.add('collapsed');
-        // Switch back to main terminal
-        switchPane('terminal');
-        return;
-    }
-    
-    // Otherwise expand this one and collapse others
-    Object.keys(programs).forEach(id => {
-        const p = programs[id];
-        if (id === programId) {
-            p.panel.classList.add('expanded');
-            p.panel.classList.remove('collapsed');
-        } else {
-            p.panel.classList.remove('expanded');
-            p.panel.classList.add('collapsed');
-        }
-    });
-    activePane = programId;
-    
-    // Focus input
-    const input = prog.content.querySelector('input');
-    if (input) input.focus();
-}
-
-// Command handler for main terminal
 function handleCommand(cmd) {
-    const terminal = document.getElementById('terminal');
-    const parts = cmd.trim().toLowerCase().split(/\s+/);
-    const command = parts[0];
-    const args = parts.slice(1);
+    if (!terminalEl) return;
+    var parts = cmd.trim().toLowerCase().split(/\s+/);
+    var command = parts[0];
+    var args = parts.slice(1);
 
     switch (command) {
         case '':
             break;
-            
+
         case 'ls':
-            showProjects(terminal);
+            showProjects(terminalEl);
             break;
-            
+
         case 'cd':
             if (args.length === 0) {
-                addOutput('usage: cd <project-name>', 'output', terminal);
+                addOutput('usage: cd &lt;project-name&gt;', 'output', terminalEl);
             } else {
-                const projectName = args[0].replace('/', '');
+                var projectName = args[0].replace('/', '');
                 if (projects[projectName]) {
-                    addOutput(`Opening ${projectName}...`, 'output', terminal);
-                    setTimeout(() => {
-                        window.open(projects[projectName].link, '_blank');
-                    }, 500);
+                    addOutput('Opening ' + projectName + '...', 'output', terminalEl);
+                    setTimeout(function() { window.open(projects[projectName].link, '_blank'); }, 500);
                 } else {
-                    addOutput(`cd: no such directory: ${args[0]}`, 'error', terminal);
+                    addOutput('cd: no such directory: ' + args[0], 'error', terminalEl);
                 }
             }
             break;
-            
+
         case 'cat':
             if (args.length === 0) {
-                addOutput('usage: cat <filename>', 'output', terminal);
+                addOutput('usage: cat &lt;filename&gt;', 'output', terminalEl);
             } else {
-                const filename = args[0];
+                var filename = args[0];
                 if (files[filename]) {
-                    const lines = files[filename].split('\n');
-                    lines.forEach(line => addOutput(line, 'output', terminal));
+                    files[filename].split('\n').forEach(function(line) {
+                        addOutput(line, 'output', terminalEl);
+                    });
                 } else {
-                    addOutput(`cat: ${filename}: No such file or directory`, 'error', terminal);
+                    addOutput('cat: ' + filename + ': No such file or directory', 'error', terminalEl);
                 }
             }
             break;
-            
+
         case 'help':
-            showHelp(terminal);
+            showHelp(terminalEl);
             break;
-            
+
         case 'about':
-            showAbout(terminal);
+            showAbout(terminalEl);
             break;
-            
+
         case 'clear':
-            terminal.innerHTML = '';
+            terminalEl.innerHTML = '';
             return 'clear';
-            
+
         case 'whoami':
-            addOutput('Nusret Efe Ucer', 'output', terminal);
+            addOutput('Nusret Efe Ucer', 'output', terminalEl);
             break;
-            
-        case 'about':
-            showAbout(terminal);
+
+        case 'open':
+            if (args.length === 0) {
+                addOutput('usage: open &lt;section&gt;', 'output', terminalEl);
+                addOutput('sections: about, projects, experience, skills, links', 'output', terminalEl);
+            } else {
+                var section = args[0];
+                if (windowConfigs[section] && section !== 'terminal') {
+                    openWindow(section);
+                    addOutput('Opening ' + section + '...', 'output', terminalEl);
+                } else {
+                    addOutput('Unknown section: ' + section, 'error', terminalEl);
+                }
+            }
             break;
-            
+
         case './experiences':
         case 'experiences':
-            launchProgram('experiences');
-            return 'program';
-            
+            openWindow('experience');
+            addOutput('Opening experience window...', 'output', terminalEl);
+            break;
+
         case './skills':
         case 'skills':
-            launchProgram('skills');
-            return 'program';
-            
-        default:
-            addOutput(`command not found: ${command}`, 'error', terminal);
-            addOutput('Type "help" for available commands', 'output', terminal);
-    }
-}
-
-// Command handler for program panes
-function handleProgramCommand(programId, cmd) {
-    const prog = programs[programId];
-    if (!prog) return;
-    
-    const pane = prog.content;
-    const parts = cmd.trim().toLowerCase().split(/\s+/);
-    const command = parts[0];
-
-    switch (command) {
-        case '':
+            openWindow('skills');
+            addOutput('Opening skills window...', 'output', terminalEl);
             break;
-            
-        case 'exit':
-            closeProgram(programId);
-            return 'exit';
-            
-        case 'clear':
-            pane.innerHTML = '';
-            return 'clear';
-            
-        case 'help':
-            addOutput('Program commands:', 'output', pane);
-            addOutput('  <span class="cmd">exit</span>   <span class="cmd-desc">close this program</span>', 'output', pane);
-            addOutput('  <span class="cmd">clear</span>  <span class="cmd-desc">clear output</span>', 'output', pane);
-            break;
-            
+
         default:
-            addOutput(`command not found: ${command}`, 'error', pane);
-            addOutput('Type "exit" to close', 'output', pane);
+            addOutput('command not found: ' + command, 'error', terminalEl);
+            addOutput('Type "help" for available commands', 'output', terminalEl);
     }
 }
 
 function showProjects(pane) {
-    const projectList = Object.keys(projects).map(name => 
-        `<a href="${projects[name].link}" target="_blank" class="project-link">${name}/</a>`
-    ).join('<br>');
-    addOutput(projectList, 'ls-output', pane);
+    var list = Object.keys(projects).map(function(n) {
+        return '<span class="clickable-project" data-project="' + n + '">' + n + '/</span>';
+    }).join('<br>');
+    addOutput(list, 'ls-output', pane);
 }
 
 function showHelp(pane) {
     addOutput('Available commands:', 'output', pane);
-    addOutput('  <span class="cmd">cat</span> &lt;file&gt;      <span class="cmd-desc">read a file</span>', 'output', pane);
-    addOutput('  <span class="cmd">ls</span>              <span class="cmd-desc">list projects</span>', 'output', pane);
-    addOutput('  <span class="cmd">cd</span> &lt;name&gt;       <span class="cmd-desc">open a project</span>', 'output', pane);
-    addOutput('  <span class="cmd">./experiences</span>   <span class="cmd-desc">view work experience</span>', 'output', pane);
-    addOutput('  <span class="cmd">./skills</span>        <span class="cmd-desc">view skills</span>', 'output', pane);
-    addOutput('  <span class="cmd">clear</span>           <span class="cmd-desc">clear terminal</span>', 'output', pane);
-    addOutput('  <span class="cmd">help</span>            <span class="cmd-desc">show this help</span>', 'output', pane);
+    addOutput('  <span class="cmd clickable-cmd" data-cmd="cat description.txt">cat</span> &lt;file&gt;      <span class="cmd-desc">read a file</span>', 'output', pane);
+    addOutput('  <span class="cmd clickable-cmd" data-cmd="ls">ls</span>              <span class="cmd-desc">list projects</span>', 'output', pane);
+    addOutput('  <span class="cmd clickable-cmd" data-cmd="cd">cd</span> &lt;name&gt;       <span class="cmd-desc">open a project link</span>', 'output', pane);
+    addOutput('  <span class="cmd clickable-cmd" data-cmd="open">open</span> &lt;section&gt;  <span class="cmd-desc">open a window (about, projects, ...)</span>', 'output', pane);
+    addOutput('  <span class="cmd clickable-cmd" data-cmd="experiences">experiences</span>     <span class="cmd-desc">view experience window</span>', 'output', pane);
+    addOutput('  <span class="cmd clickable-cmd" data-cmd="skills">skills</span>          <span class="cmd-desc">view skills window</span>', 'output', pane);
+    addOutput('  <span class="cmd clickable-cmd" data-cmd="clear">clear</span>           <span class="cmd-desc">clear terminal</span>', 'output', pane);
+    addOutput('  <span class="cmd clickable-cmd" data-cmd="help">help</span>            <span class="cmd-desc">show this help</span>', 'output', pane);
 }
 
 function catFile(filename, pane) {
     if (files[filename]) {
-        const lines = files[filename].split('\n');
-        lines.forEach(line => addOutput(line, 'output', pane));
+        files[filename].split('\n').forEach(function(line) {
+            addOutput(line, 'output', pane);
+        });
     }
-}
-
-function ensureRightPane() {
-    let rightPane = document.getElementById('rightPane');
-    if (!rightPane) {
-        const panesContainer = document.querySelector('.terminal-panes');
-        rightPane = document.createElement('div');
-        rightPane.className = 'terminal-pane right-pane';
-        rightPane.id = 'rightPane';
-        panesContainer.appendChild(rightPane);
-    }
-    return rightPane;
-}
-
-async function launchProgram(programId) {
-    if (programs[programId]) {
-        expandProgram(programId);
-        return;
-    }
-    
-    const rightPane = ensureRightPane();
-    
-    // Create program panel
-    const panel = document.createElement('div');
-    panel.className = 'program-panel expanded';
-    panel.id = `panel-${programId}`;
-    
-    const header = document.createElement('div');
-    header.className = 'program-header';
-    header.innerHTML = `<span class="program-title">${programId}</span><span class="program-status">running</span>`;
-    header.onclick = () => expandProgram(programId);
-    
-    const content = document.createElement('div');
-    content.className = 'program-content';
-    
-    panel.appendChild(header);
-    panel.appendChild(content);
-    rightPane.appendChild(panel);
-    
-    // Collapse other programs
-    Object.keys(programs).forEach(id => {
-        programs[id].panel.classList.remove('expanded');
-        programs[id].panel.classList.add('collapsed');
-    });
-    
-    programs[programId] = { panel, content, header };
-    activePane = programId;
-    
-    // Print program content
-    if (programId === 'experiences') {
-        await printExperiencesTree(content);
-    } else if (programId === 'skills') {
-        await printSkillsTree(content);
-    }
-    
-    // Add input line
-    createProgramInputLine(programId);
-}
-
-async function printExperiencesTree(pane) {
-    await sleep(200);
-    addOutput('<span class="exp-tree-title">experiences/</span>', 'output', pane);
-    addOutput('│', 'output', pane);
-    
-    for (let i = 0; i < experiences.length; i++) {
-        const exp = experiences[i];
-        const isLast = i === experiences.length - 1;
-        const branch = isLast ? '└──' : '├──';
-        const indent = isLast ? '    ' : '│   ';
-        
-        await sleep(150);
-        addOutput(`${branch} <span class="exp-company">${exp.company}/</span>`, 'output', pane);
-        
-        await sleep(100);
-        addOutput(`${indent} <span class="exp-role">${exp.role}</span>`, 'output', pane);
-        
-        await sleep(80);
-        addOutput(`${indent} <span class="exp-date">${exp.date}</span>`, 'output', pane);
-        
-        for (const detail of exp.details) {
-            await sleep(60);
-            addOutput(`${indent} <span class="exp-detail">· ${detail}</span>`, 'output', pane);
-        }
-        
-        if (!isLast) {
-            await sleep(60);
-            addOutput('│', 'output', pane);
-        }
-    }
-    
-    addOutput('&nbsp;', 'output', pane);
-}
-
-async function printSkillsTree(pane) {
-    await sleep(200);
-    addOutput('<span class="exp-tree-title">skills/</span>', 'output', pane);
-    addOutput('│', 'output', pane);
-    
-    const categories = Object.keys(skills);
-    for (let i = 0; i < categories.length; i++) {
-        const category = categories[i];
-        const items = skills[category];
-        const isLast = i === categories.length - 1;
-        const branch = isLast ? '└──' : '├──';
-        const indent = isLast ? '    ' : '│   ';
-        
-        await sleep(150);
-        addOutput(`${branch} <span class="exp-company">${category}/</span>`, 'output', pane);
-        
-        for (let j = 0; j < items.length; j++) {
-            await sleep(60);
-            addOutput(`${indent} <span class="exp-detail">· ${items[j]}</span>`, 'output', pane);
-        }
-        
-        if (!isLast) {
-            await sleep(60);
-            addOutput('│', 'output', pane);
-        }
-    }
-    
-    addOutput('&nbsp;', 'output', pane);
-}
-
-function closeProgram(programId) {
-    const prog = programs[programId];
-    if (!prog) return;
-    
-    prog.panel.remove();
-    delete programs[programId];
-    
-    // If no more programs, remove right pane
-    if (Object.keys(programs).length === 0) {
-        const rightPane = document.getElementById('rightPane');
-        if (rightPane) rightPane.remove();
-        switchPane('terminal');
-    } else {
-        // Expand another program
-        const remaining = Object.keys(programs)[0];
-        expandProgram(remaining);
-    }
-}
-
-function createProgramInputLine(programId) {
-    const prog = programs[programId];
-    if (!prog) return;
-    
-    const pane = prog.content;
-    
-    const inputLine = document.createElement('div');
-    inputLine.className = 'terminal-line input-line';
-    inputLine.innerHTML = createPrompt(programId);
-    
-    const input = document.createElement('input');
-    input.type = 'text';
-    
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const cmd = input.value;
-            const cmdTrimmed = cmd.trim().toLowerCase();
-            
-            inputLine.innerHTML = createPrompt(programId) + `<span class="command">${cmd}</span>`;
-            
-            const result = handleProgramCommand(programId, cmd);
-            
-            if (result === 'exit') return;
-            
-            if (cmdTrimmed !== 'clear') {
-                pane.appendChild(createLine('&nbsp;'));
-            }
-            
-            createProgramInputLine(programId);
-        }
-    });
-    
-    inputLine.appendChild(input);
-    pane.appendChild(inputLine);
-    input.focus();
-    scrollToBottom(pane);
-}
-
-// Create interactive input for main terminal
-function createInputLine() {
-    const terminal = document.getElementById('terminal');
-    const inputLine = document.createElement('div');
-    inputLine.className = 'terminal-line input-line';
-    inputLine.innerHTML = createPrompt();
-    
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.autofocus = true;
-    
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const cmd = input.value;
-            const cmdTrimmed = cmd.trim().toLowerCase();
-            
-            inputLine.innerHTML = createPrompt() + `<span class="command">${cmd}</span>`;
-            
-            const result = handleCommand(cmd);
-            
-            if (cmdTrimmed !== 'clear' && result !== 'program') {
-                terminal.appendChild(createLine('&nbsp;'));
-            }
-            
-            createInputLine();
-        } else if (e.key === 'Tab') {
-            e.preventDefault();
-            showTabComplete(input);
-        }
-    });
-    
-    inputLine.appendChild(input);
-    terminal.appendChild(inputLine);
-    input.focus();
-    scrollToBottom(terminal);
-}
-
-function showTabComplete(input) {
-    const terminal = document.getElementById('terminal');
-    const val = input.value.trim().toLowerCase();
-    const commands = ['ls', 'cd', 'clear', 'help', 'whoami', './experiences', './skills'];
-    const projectNames = Object.keys(projects);
-    
-    if (val.startsWith('cd ')) {
-        const partial = val.slice(3);
-        const matches = projectNames.filter(p => p.startsWith(partial));
-        if (matches.length === 1) {
-            input.value = 'cd ' + matches[0];
-        } else if (matches.length > 1) {
-            addOutput(matches.join('  '), 'tab-complete', terminal);
-        }
-    } else if (val === '') {
-        addOutput('<span class="tab-hint">commands: ' + commands.join('  ') + '</span>', 'tab-complete', terminal);
-    } else {
-        const matches = commands.filter(c => c.startsWith(val));
-        if (matches.length === 1) {
-            input.value = matches[0];
-        } else if (matches.length > 1) {
-            addOutput(matches.join('  '), 'tab-complete', terminal);
-        }
-    }
-}
-
-// Initial sequence
-const initSequence = [
-    { type: 'hint', html: '# Personal website — type "help" or click <span class="hint-link" onclick="runAbout()">About</span>' },
-    { type: 'empty' },
-    { type: 'command', text: 'echo "Hi, I\'m Nusret Efe Ucer"' },
-    { type: 'output', html: 'Hi, I\'m Nusret Efe Ucer' },
-    { type: 'output', html: '<span class="comment"># Computer Science student @ UChicago — projects, experience, links</span>' },
-    { type: 'empty' },
-    { type: 'command', text: 'cat description.txt' },
-    { type: 'cat', file: 'description.txt' },
-    { type: 'empty' },
-    { type: 'command', text: 'cat links.txt' },
-    { type: 'cat', file: 'links.txt' },
-    { type: 'empty' },
-    { type: 'command', text: 'ls projects/' },
-    { type: 'projects' },
-    { type: 'empty' },
-    { type: 'command', text: 'help' },
-    { type: 'help' },
-    { type: 'empty' }
-];
-
-function runAbout() {
-    const terminal = document.getElementById('terminal');
-    // Add command line
-    terminal.appendChild(createLine(createPrompt() + '<span class="command">about</span>'));
-    // Run about command
-    showAbout(terminal);
-    terminal.appendChild(createLine('&nbsp;'));
-    createInputLine();
 }
 
 function showAbout(pane) {
@@ -597,70 +542,199 @@ function showAbout(pane) {
     addOutput('  AI/ML Co-director @ UChicago ACM', 'output', pane);
     addOutput('', 'output', pane);
     addOutput('<span class="comment"># Quick commands:</span>', 'output', pane);
-    addOutput('  ./experiences   — view work history', 'output', pane);
-    addOutput('  ./skills        — view technical skills', 'output', pane);
-    addOutput('  ls              — list projects', 'output', pane);
-    addOutput('  cat links.txt   — social links', 'output', pane);
+    addOutput('  <span class="clickable-cmd" data-cmd="open about">open about</span>        \u2014 about window', 'output', pane);
+    addOutput('  <span class="clickable-cmd" data-cmd="open projects">open projects</span>     \u2014 projects window', 'output', pane);
+    addOutput('  <span class="clickable-cmd" data-cmd="open experience">open experience</span>   \u2014 experience window', 'output', pane);
+    addOutput('  <span class="clickable-cmd" data-cmd="open skills">open skills</span>       \u2014 skills window', 'output', pane);
 }
 
-async function runInitSequence() {
-    const terminal = document.getElementById('terminal');
-    
-    for (const item of initSequence) {
-        switch (item.type) {
-            case 'hint':
-                addOutput(item.html, 'hint', terminal);
-                await sleep(100);
-                break;
-                
-            case 'command':
-                await sleep(lineDelay);
-                const cmdLine = createLine(createPrompt() + '<span class="command"></span>');
-                terminal.appendChild(cmdLine);
-                const cmdSpan = cmdLine.querySelector('.command');
-                await typeText(cmdSpan, item.text);
-                await sleep(lineDelay);
-                break;
-                
-            case 'output':
-                addOutput(item.html, 'output', terminal);
-                await sleep(150);
-                break;
-                
-            case 'projects':
-                showProjects(terminal);
-                await sleep(lineDelay);
-                break;
-                
-            case 'empty':
-                terminal.appendChild(createLine('&nbsp;'));
-                await sleep(100);
-                break;
-                
-            case 'help':
-                showHelp(terminal);
-                await sleep(lineDelay);
-                break;
-                
-            case 'cat':
-                catFile(item.file, terminal);
-                await sleep(lineDelay);
-                break;
-                
-            case 'program':
-                await launchProgram(item.name);
-                switchPane('terminal');
-                terminal.appendChild(createLine('&nbsp;'));
-                await sleep(300);
-                break;
-        }
-        scrollToBottom(terminal);
-    }
-    
+function runAbout() {
+    if (!terminalEl) return;
+    terminalEl.appendChild(createLine(createPrompt() + '<span class="command">about</span>'));
+    showAbout(terminalEl);
+    terminalEl.appendChild(createLine('&nbsp;'));
     createInputLine();
 }
 
-// Start
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(runInitSequence, 500);
+function showTabComplete(input) {
+    if (!terminalEl) return;
+    var val = input.value.trim().toLowerCase();
+    var commands = ['ls', 'cd', 'cat', 'open', 'clear', 'help', 'whoami', 'experiences', 'skills'];
+    var projectNames = Object.keys(projects);
+
+    if (val.startsWith('cd ')) {
+        var partial = val.slice(3);
+        var matches = projectNames.filter(function(p) { return p.startsWith(partial); });
+        if (matches.length === 1) { input.value = 'cd ' + matches[0]; }
+        else if (matches.length > 1) { addOutput(matches.join('  '), 'tab-complete', terminalEl); }
+    } else if (val.startsWith('open ')) {
+        var partialSec = val.slice(5);
+        var sections = Object.keys(windowConfigs).filter(function(s) { return s !== 'terminal' && s.startsWith(partialSec); });
+        if (sections.length === 1) { input.value = 'open ' + sections[0]; }
+        else if (sections.length > 1) { addOutput(sections.join('  '), 'tab-complete', terminalEl); }
+    } else if (val === '') {
+        addOutput('<span class="tab-hint">commands: ' + commands.join('  ') + '</span>', 'tab-complete', terminalEl);
+    } else {
+        var cmdMatches = commands.filter(function(c) { return c.startsWith(val); });
+        if (cmdMatches.length === 1) { input.value = cmdMatches[0]; }
+        else if (cmdMatches.length > 1) { addOutput(cmdMatches.join('  '), 'tab-complete', terminalEl); }
+    }
+}
+
+function createInputLine() {
+    if (!terminalEl) return;
+    var inputLine = document.createElement('div');
+    inputLine.className = 'terminal-line input-line';
+    inputLine.innerHTML = createPrompt();
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.autofocus = true;
+
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            var cmd = input.value;
+            var cmdTrimmed = cmd.trim().toLowerCase();
+            inputLine.innerHTML = createPrompt() + '<span class="command">' + cmd + '</span>';
+            var result = handleCommand(cmd);
+            if (cmdTrimmed !== 'clear') {
+                terminalEl.appendChild(createLine('&nbsp;'));
+            }
+            createInputLine();
+        } else if (e.key === 'Tab') {
+            e.preventDefault();
+            showTabComplete(input);
+        }
+    });
+
+    inputLine.appendChild(input);
+    terminalEl.appendChild(inputLine);
+    input.focus();
+    scrollToBottom(terminalEl);
+}
+
+// =============================================================
+// INIT SEQUENCE
+// =============================================================
+
+var initSequence = [
+    { type: 'command', text: 'echo "Hi, I\'m Nusret Efe Ucer"' },
+    { type: 'output', html: 'Hi, I\'m Nusret Efe Ucer' },
+    { type: 'output', html: '<span class="comment"># Computer Science student @ UChicago \u2014 projects, experience, links</span>' },
+    { type: 'empty' },
+    { type: 'command', text: 'cat links.txt' },
+    { type: 'cat', file: 'links.txt' },
+    { type: 'empty' },
+    { type: 'output', html: '<span class="comment"># type "help" for commands, or use the desktop icons</span>' },
+    { type: 'empty' }
+];
+
+async function runInitSequence() {
+    if (!terminalEl) return;
+
+    for (var i = 0; i < initSequence.length; i++) {
+        var item = initSequence[i];
+        switch (item.type) {
+            case 'hint':
+                addOutput(item.html, 'hint', terminalEl);
+                await sleep(100);
+                break;
+
+            case 'command':
+                await sleep(lineDelay);
+                var cmdLine = createLine(createPrompt() + '<span class="command"></span>');
+                terminalEl.appendChild(cmdLine);
+                var cmdSpan = cmdLine.querySelector('.command');
+                await typeText(cmdSpan, item.text);
+                await sleep(lineDelay);
+                break;
+
+            case 'output':
+                addOutput(item.html, 'output', terminalEl);
+                await sleep(150);
+                break;
+
+            case 'projects':
+                showProjects(terminalEl);
+                await sleep(lineDelay);
+                break;
+
+            case 'empty':
+                terminalEl.appendChild(createLine('&nbsp;'));
+                await sleep(100);
+                break;
+
+            case 'help':
+                showHelp(terminalEl);
+                await sleep(lineDelay);
+                break;
+
+            case 'cat':
+                catFile(item.file, terminalEl);
+                await sleep(lineDelay);
+                break;
+        }
+        scrollToBottom(terminalEl);
+    }
+
+    createInputLine();
+}
+
+// =============================================================
+// INITIALIZATION
+// =============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateClock();
+    setInterval(updateClock, 60000);
+    openWindow('terminal');
 });
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && activitiesOpen) {
+        toggleActivities();
+    }
+});
+
+// Focus terminal input when clicking terminal pane
+document.addEventListener('click', function(e) {
+    // Handle clickable commands
+    var cmdEl = e.target.closest('.clickable-cmd');
+    if (cmdEl && terminalEl) {
+        var cmd = cmdEl.dataset.cmd;
+        if (cmd) {
+            runClickedCommand(cmd);
+            return;
+        }
+    }
+
+    // Handle clickable project names
+    var projEl = e.target.closest('.clickable-project');
+    if (projEl && terminalEl) {
+        var projName = projEl.dataset.project;
+        if (projName && projects[projName]) {
+            runClickedCommand('cd ' + projName);
+            return;
+        }
+    }
+
+    if (terminalEl && terminalEl.contains(e.target)) {
+        var input = terminalEl.querySelector('input');
+        if (input) input.focus();
+    }
+});
+
+function runClickedCommand(cmd) {
+    if (!terminalEl) return;
+    var existingInput = terminalEl.querySelector('.input-line');
+    if (existingInput) {
+        existingInput.className = 'terminal-line';
+        existingInput.innerHTML = createPrompt() + '<span class="command">' + cmd + '</span>';
+    }
+    handleCommand(cmd);
+    var cmdTrimmed = cmd.trim().toLowerCase();
+    if (cmdTrimmed !== 'clear') {
+        terminalEl.appendChild(createLine('&nbsp;'));
+    }
+    createInputLine();
+}

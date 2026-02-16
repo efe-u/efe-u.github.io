@@ -7,27 +7,102 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=SF+Mono:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="terminal-container">
-        <div class="terminal-window">
-            <div class="terminal-header">
-                <div class="terminal-buttons">
-                    <span class="btn-close"></span>
-                    <span class="btn-minimize"></span>
-                    <span class="btn-maximize"></span>
+    <!-- GNOME Top Bar -->
+    <div class="top-bar">
+        <button class="activities-btn" onclick="toggleActivities()">Activities</button>
+        <span class="clock" id="clock"></span>
+        <span class="status-name">Nusret Efe Ucer</span>
+    </div>
+
+    <!-- Desktop Wallpaper -->
+    <div class="desktop" id="desktop">
+        <video autoplay muted loop playsinline>
+            <source src="background.mp4" type="video/mp4">
+        </video>
+        <div class="desktop-icons">
+            <div class="desktop-icon" onclick="openWindow('about')">
+                <div class="desktop-icon-img" style="background:#3584e4">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                 </div>
-                <div class="terminal-title">Nusret Efe Ucer's Personal Website — zsh — 80×24</div>
-                <div class="terminal-spacer"></div>
+                <span class="desktop-icon-label">About Me</span>
             </div>
-            <div class="terminal-panes">
-                <div class="terminal-pane active" id="terminal">
-                    <!-- Main terminal content -->
+            <div class="desktop-icon" onclick="openWindow('projects')">
+                <div class="desktop-icon-img" style="background:#e66100">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
                 </div>
+                <span class="desktop-icon-label">Projects</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('experience')">
+                <div class="desktop-icon-img" style="background:#2ec27e">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                </div>
+                <span class="desktop-icon-label">Experience</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('skills')">
+                <div class="desktop-icon-img" style="background:#c061cb">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                </div>
+                <span class="desktop-icon-label">Skills</span>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('links')">
+                <div class="desktop-icon-img" style="background:#1c71d8">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                </div>
+                <span class="desktop-icon-label">Links</span>
             </div>
         </div>
     </div>
+
+    <!-- Windows Layer -->
+    <div class="windows-layer" id="windowsLayer"></div>
+
+    <!-- Dock -->
+    <div class="dock" id="dock">
+        <div class="dock-item" onclick="openWindow('about')">
+            <div class="dock-icon" style="background:#3584e4">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </div>
+            <span class="dock-tooltip">About Me</span>
+        </div>
+        <div class="dock-item" onclick="openWindow('projects')">
+            <div class="dock-icon" style="background:#e66100">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+            </div>
+            <span class="dock-tooltip">Projects</span>
+        </div>
+        <div class="dock-item" onclick="openWindow('experience')">
+            <div class="dock-icon" style="background:#2ec27e">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+            </div>
+            <span class="dock-tooltip">Experience</span>
+        </div>
+        <div class="dock-item" onclick="openWindow('skills')">
+            <div class="dock-icon" style="background:#c061cb">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+            </div>
+            <span class="dock-tooltip">Skills</span>
+        </div>
+        <div class="dock-item" onclick="openWindow('links')">
+            <div class="dock-icon" style="background:#1c71d8">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+            </div>
+            <span class="dock-tooltip">Links</span>
+        </div>
+        <div class="dock-separator"></div>
+        <div class="dock-item" onclick="openWindow('terminal')">
+            <div class="dock-icon dock-terminal-icon">&gt;_</div>
+            <span class="dock-tooltip">Terminal</span>
+        </div>
+    </div>
+
+    <!-- Activities Overlay -->
+    <div class="activities-overlay" id="activitiesOverlay" onclick="handleActivitiesClick(event)">
+        <div class="activities-content" id="activitiesContent"></div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
