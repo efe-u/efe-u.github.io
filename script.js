@@ -688,6 +688,15 @@ document.addEventListener('DOMContentLoaded', function() {
     updateClock();
     setInterval(updateClock, 60000);
     openWindow('terminal');
+
+    var bgVideo = document.getElementById('bgVideo');
+    if (bgVideo) {
+        bgVideo.play().catch(function() {});
+        document.addEventListener('click', function tryPlay() {
+            bgVideo.play().catch(function() {});
+            document.removeEventListener('click', tryPlay);
+        });
+    }
 });
 
 document.addEventListener('keydown', function(e) {
