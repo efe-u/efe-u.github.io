@@ -3,104 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Efe Ucer</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <title>Nusret Efe Ucer | CS + Econ @ UChicago</title>
+    <meta name="description" content="Nusret Efe Ucer — B.S. Computer Science + B.A. Economics at the University of Chicago. Building large-scale data platforms, AI-driven systems, and distributed infrastructure.">
+    <meta name="author" content="Nusret Efe Ucer">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:title" content="Nusret Efe Ucer | CS + Econ @ UChicago">
+    <meta property="og:description" content="B.S. Computer Science + B.A. Economics at the University of Chicago. Building large-scale data platforms, AI-driven systems, and distributed infrastructure.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://efe-u.github.io">
+    <meta property="og:image" content="https://efe-u.github.io/profile.jpg">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Nusret Efe Ucer | CS + Econ @ UChicago">
+    <meta name="twitter:description" content="Building large-scale data platforms, AI-driven systems, and distributed infrastructure.">
+    <link rel="canonical" href="https://efe-u.github.io">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <!-- GNOME Top Bar -->
-    <div class="top-bar">
-        <button class="activities-btn" onclick="toggleActivities()">Activities</button>
-        <span class="clock" id="clock"></span>
-        <span class="status-name">Nusret Efe Ucer</span>
-    </div>
+    <div class="window">
+        <header class="window-bar">
+            <div class="dots" aria-hidden="true">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="window-title">efe@macbook&nbsp;:&nbsp;~ — tmux</div>
+            <a class="resume-pill" href="resume.pdf" target="_blank" rel="noopener" aria-label="Download résumé PDF">
+                <span class="resume-pill-bracket">[</span>resume.pdf<span class="resume-pill-arrow">↗</span><span class="resume-pill-bracket">]</span>
+            </a>
+        </header>
 
-    <!-- Desktop Wallpaper -->
-    <div class="desktop" id="desktop">
-        <video id="bgVideo" autoplay muted loop playsinline>
-            <source src="background.mp4" type="video/mp4">
-        </video>
-        <div class="desktop-icons">
-            <div class="desktop-icon" onclick="openWindow('about')">
-                <div class="desktop-icon-img" style="background:#3584e4">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <div class="grid">
+            <aside class="pane pane-left" aria-label="Section navigation">
+                <div class="pane-header">
+                    <span class="pane-tag">~/nav</span>
                 </div>
-                <span class="desktop-icon-label">About Me</span>
-            </div>
-            <div class="desktop-icon" onclick="openWindow('projects')">
-                <div class="desktop-icon-img" style="background:#e66100">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                <nav class="cmd-nav">
+                    <button class="cmd-link" data-target="whoami">
+                        <span class="prompt">$</span> <span class="cmd">whoami</span>
+                    </button>
+                    <button class="cmd-link" data-target="about">
+                        <span class="prompt">$</span> <span class="cmd">cat about.md</span>
+                    </button>
+                    <button class="cmd-link" data-target="education">
+                        <span class="prompt">$</span> <span class="cmd">cat education.md</span>
+                    </button>
+                    <button class="cmd-link" data-target="experience">
+                        <span class="prompt">$</span> <span class="cmd">cat experience.md</span>
+                    </button>
+                    <button class="cmd-link" data-target="projects">
+                        <span class="prompt">$</span> <span class="cmd">ls projects/</span>
+                    </button>
+                    <button class="cmd-link" data-target="leadership">
+                        <span class="prompt">$</span> <span class="cmd">cat leadership.md</span>
+                    </button>
+                    <button class="cmd-link" data-target="skills">
+                        <span class="prompt">$</span> <span class="cmd">cat skills.txt</span>
+                    </button>
+                    <button class="cmd-link" data-target="contact">
+                        <span class="prompt">$</span> <span class="cmd">cat contact.md</span>
+                    </button>
+                </nav>
+                <div class="pane-footer">
+                    <div class="active-row">
+                        <span class="muted">active:</span>
+                        <span class="active-name" id="active-name">whoami</span>
+                    </div>
+                    <div class="hint muted">click a command to jump</div>
                 </div>
-                <span class="desktop-icon-label">Projects</span>
-            </div>
-            <div class="desktop-icon" onclick="openWindow('experience')">
-                <div class="desktop-icon-img" style="background:#2ec27e">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
-                </div>
-                <span class="desktop-icon-label">Experience</span>
-            </div>
-            <div class="desktop-icon" onclick="openWindow('skills')">
-                <div class="desktop-icon-img" style="background:#c061cb">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
-                </div>
-                <span class="desktop-icon-label">Skills</span>
-            </div>
-            <div class="desktop-icon" onclick="openWindow('links')">
-                <div class="desktop-icon-img" style="background:#1c71d8">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
-                </div>
-                <span class="desktop-icon-label">Links</span>
-            </div>
-        </div>
-    </div>
+            </aside>
 
-    <!-- Windows Layer -->
-    <div class="windows-layer" id="windowsLayer"></div>
+            <main class="pane pane-right" id="pane-right">
+                <div class="pane-header right-header">
+                    <span class="pane-tag" id="crumb">~/whoami</span>
+                </div>
 
-    <!-- Dock -->
-    <div class="dock" id="dock">
-        <div class="dock-item" onclick="openWindow('about')">
-            <div class="dock-icon" style="background:#3584e4">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            </div>
-            <span class="dock-tooltip">About Me</span>
-        </div>
-        <div class="dock-item" onclick="openWindow('projects')">
-            <div class="dock-icon" style="background:#e66100">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
-            </div>
-            <span class="dock-tooltip">Projects</span>
-        </div>
-        <div class="dock-item" onclick="openWindow('experience')">
-            <div class="dock-icon" style="background:#2ec27e">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-2 .89-2 2v11c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
-            </div>
-            <span class="dock-tooltip">Experience</span>
-        </div>
-        <div class="dock-item" onclick="openWindow('skills')">
-            <div class="dock-icon" style="background:#c061cb">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
-            </div>
-            <span class="dock-tooltip">Skills</span>
-        </div>
-        <div class="dock-item" onclick="openWindow('links')">
-            <div class="dock-icon" style="background:#1c71d8">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
-            </div>
-            <span class="dock-tooltip">Links</span>
-        </div>
-        <div class="dock-separator"></div>
-        <div class="dock-item" onclick="openWindow('terminal')">
-            <div class="dock-icon dock-terminal-icon">&gt;_</div>
-            <span class="dock-tooltip">Terminal</span>
-        </div>
-    </div>
+                <section class="block" id="whoami">
+                    <div class="cmd-line">
+                        <span class="prompt">$</span> <span class="cmd">whoami</span>
+                    </div>
+                    <div class="output">
+                        <div class="hero-row">
+                            <div class="hero-text">
+                                <h1 class="name">Nusret Efe Ucer</h1>
+                                <p class="tagline">B.S. Computer Science <span class="dim">+</span> B.A. Economics <span class="dim">@</span> University of Chicago</p>
+                                <p class="meta">Chicago, IL · GPA 3.820 · Expected June 2028</p>
+                            </div>
+                            <img src="profile.jpg" alt="Nusret Efe Ucer" class="hero-photo" width="160" height="160" loading="eager">
+                        </div>
 
-    <!-- Activities Overlay -->
-    <div class="activities-overlay" id="activitiesOverlay" onclick="handleActivitiesClick(event)">
-        <div class="activities-content" id="activitiesContent"></div>
+                        <div class="cmd-line cmd-sub">
+                            <span class="prompt">$</span> <span class="cmd">ls contact/</span>
+                        </div>
+                        <ul class="contact-line" role="list">
+                            <li><a href="https://github.com/efe-u" target="_blank" rel="noopener">github</a></li>
+                            <li><a href="https://www.linkedin.com/in/nusret-efe-ucer-868296243/" target="_blank" rel="noopener">linkedin</a></li>
+                            <li><a href="mailto:efeucer@uchicago.edu">email</a></li>
+                            <li><a href="resume.pdf" target="_blank" rel="noopener">resume</a></li>
+                        </ul>
+                        <span class="cursor" aria-hidden="true"></span>
+                    </div>
+                </section>
+
+                <section class="block" id="about">
+                    <div class="cmd-line">
+                        <span class="prompt">$</span> <span class="cmd">cat about.md</span>
+                    </div>
+                    <div class="output prose">
+                        <p>I build large-scale data platforms, AI-driven systems, and distributed infrastructure — turning messy real-world data into products people can actually use.</p>
+                        <p>Currently shipping ML and data tooling at <a href="https://www.glnk.io" target="_blank" rel="noopener">G LNK (YC W25)</a>, building ground-station software for <span class="hl">UChicago PULSE-A</span>, and serving as <span class="hl">President of UChicago ACM</span>. Joining <span class="hl">Velocity Catalyst Fund</span> as a Pipeline Tool Management Intern in summer 2026.</p>
+                    </div>
+                </section>
+
+                <section class="block" id="education">
+                    <div class="cmd-line">
+                        <span class="prompt">$</span> <span class="cmd">cat education.md</span>
+                    </div>
+                    <div class="output md">
+                        <article class="role">
+                            <header class="role-head">
+                                <h2 class="md-h2"><span class="md-hash">##</span> The University of Chicago</h2>
+                                <p class="role-meta">B.S. Computer Science · B.A. Economics <span class="dot-sep">·</span> Expected June 2028 <span class="dot-sep">·</span> GPA 3.820</p>
+                            </header>
+                        </article>
+
+                        <article class="role">
+                            <header class="role-head">
+                                <h2 class="md-h2"><span class="md-hash">##</span> Awards</h2>
+                            </header>
+                            <ul class="md-list">
+                                <li>UChicago 2025 Summer Tech Showcase — <span class="hl">Runner-up</span> ($5K)</li>
+                                <li>UChicago 2025 Winter Tech Showcase ($750)</li>
+                                <li>UChicago Grant for Hackathon</li>
+                                <li>Jeff Metcalf Award Recipient ×2</li>
+                            </ul>
+                        </article>
+
+                        <article class="role">
+                            <header class="role-head">
+                                <h2 class="md-h2"><span class="md-hash">##</span> Relevant Coursework</h2>
+                            </header>
+                            <ul class="md-list">
+                                <li>Multiscale Modeling of Biological Systems I &amp; II</li>
+                                <li>Honors Discrete Mathematics</li>
+                                <li>TTIC 31150 — Graduate Abstract Linear Algebra &amp; Probability</li>
+                                <li>Theory of Algorithms · Machine Learning · Statistical Methods &amp; Applications</li>
+                                <li>Introduction to Database Systems · Introduction to Computer Security</li>
+                                <li>Investments · The Elements of Economic Analysis I</li>
+                            </ul>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="block" id="experience">
+                    <div class="cmd-line">
+                        <span class="prompt">$</span> <span class="cmd">cat experience.md</span>
+                    </div>
+                    <div class="output md">
+                        <article class="role">
+                            <header class="role-head">
+                                <h2 class="md-h2"><span class="md-hash">##</span> Velocity Catalyst Fund <span class="badge">Incoming</span></h2>
+                                <p class="role-meta">Pipeline Tool Management Intern <span class="dot-sep">·</span> Jun – Aug 2026 <span class="dot-sep">·</span> Chicago, IL</p>
+                            </header>
+                        </article>
+
+                        <article class="role">
+                            <header class="role-head">
+                                <h2 class="md-h2"><span class="md-hash">##</span> G LNK <span class="badge">YC W25</span></h2>
+                                <p class="role-meta">ML Engineer (Part-Time) / ML Engineering Intern <span class="dot-sep">·</span> Jun 2025 – Present <span class="dot-sep">·</span> Chicago, IL</p>
+                            </header>
+                            <ul class="md-list">
+                                <li>Independently built the company's entire database from zero — scraped and unified 300+ government healthcare datasets (CMS, NHS, French Ministry of Health) for full national coverage; transformed 10⁹+ raw Azure SQL records into 10⁷-scale Elasticsearch / Databricks / MongoDB systems with custom schemas, indexing, and ownership hierarchies, and built cross-dataset relational links using OpenAI and Vertex AI.</li>
+                                <li>Engineered the company's client-facing ETL pipeline for expansion into non-healthcare industries and data enrichment. Optimized credit usage and parallelized execution across Azure VMs, multithreading, and async workflows. Enabled same-day integrations and scaled to ~92% global market coverage across 170+ countries — accelerating client demos and acquisition. Worked extensively with Apollo.</li>
+                                <li>Built a full-stack search &amp; analytics system: Elasticsearch + MongoDB-backed search with multi-criteria and regex filtering, a DataGrid frontend for interactive exploration, and analysis pages with computed metrics and cost breakdowns for in-depth organizational insights.</li>
+                            </ul>
+                        </article>
+
+                        <article class="role">
+                            <header class="role-head">
+                                <h2 class="md-h2"><span class="md-hash">##</span> UChicago PULSE-A</h2>
+                                <p class="role-meta">Ground Station Software Engineer <span class="dot-sep">·</span> Oct 2024 – Present <span class="dot-sep">·</span> Chicago, IL</p>
+                            </header>
+                            <ul class="md-list">
+                                <li>Built the PyQt Ground Station control system from scratch — GUI, backend logic, multithreaded and async process management, and real-time command/data handling for the Optical Ground Station's telescope and laser-communication assembly.</li>
+                                <li>Designed latency-aware communication workflows for a fully student-led satellite launch, meeting orbital-tracking requirements and enabling reliable low-latency inter-city communication between the Optical and RF Ground Stations.</li>
+                            </ul>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="block" id="projects">
+                    <div class="cmd-line">
+                        <span class="prompt">$</span> <span class="cmd">ls projects/</span>
+                    </div>
+                    <div class="output tree">
+                        <a class="tree-item" href="https://github.com/efe-u" target="_blank" rel="noopener">
+                            <span class="tree-branch">├──</span>
+                            <span class="tree-name">maroon-exchange/</span>
+                            <span class="tree-desc">P2P borrowing &amp; lending for UChicago students · React + Firebase + Azure SQL · <span class="hl">$5K Tech Showcase Runner-up</span></span>
+                        </a>
+                        <a class="tree-item" href="https://github.com/efe-u" target="_blank" rel="noopener">
+                            <span class="tree-branch">├──</span>
+                            <span class="tree-name">handsin/</span>
+                            <span class="tree-desc">sign-language conversational AI · custom ASL dataset + neural net + Gemini + DeepMotion · HackTech 2025 @ Caltech</span>
+                        </a>
+                        <a class="tree-item" href="https://github.com/efe-u" target="_blank" rel="noopener">
+                            <span class="tree-branch">├──</span>
+                            <span class="tree-name">r19q-mutation/</span>
+                            <span class="tree-desc">20 ns molecular dynamics on Midway3 — RMSD/RMSF, SASA, hydrogen bonds; demonstrated mutation-driven domain dissociation in SBDS</span>
+                        </a>
+                        <a class="tree-item" href="https://github.com/efe-u" target="_blank" rel="noopener">
+                            <span class="tree-branch">└──</span>
+                            <span class="tree-name">tennis-motion-ai/</span>
+                            <span class="tree-desc">AI-driven motion analysis for tennis @ TU Dortmund · custom weighted error metric</span>
+                        </a>
+                        <p class="tree-foot muted">4 projects · more on <a href="https://github.com/efe-u" target="_blank" rel="noopener">github.com/efe-u</a></p>
+                    </div>
+                </section>
+
+                <section class="block" id="leadership">
+                    <div class="cmd-line">
+                        <span class="prompt">$</span> <span class="cmd">cat leadership.md</span>
+                    </div>
+                    <div class="output md">
+                        <article class="role">
+                            <header class="role-head">
+                                <h2 class="md-h2"><span class="md-hash">##</span> UChicago Association for Computing Machinery</h2>
+                                <p class="role-meta">AI/ML Committee Director <span class="arrow">→</span> President <span class="dot-sep">·</span> Oct 2024 – Present <span class="dot-sep">·</span> Chicago, IL</p>
+                            </header>
+                            <ul class="md-list">
+                                <li>Lead the AI/ML committee — organize events, workshops, and journal discussions on recent AI/ML literature, LLM fundamentals, model-building, prompt engineering, jailbreaking, and hyperparameter tuning.</li>
+                                <li>Core ACM board member — oversee event organization, interview new members, and participate in board meetings supporting chapter operations.</li>
+                            </ul>
+                        </article>
+
+                        <article class="role">
+                            <header class="role-head">
+                                <h2 class="md-h2"><span class="md-hash">##</span> Turkish Student Association</h2>
+                                <p class="role-meta">Social Chair <span class="dot-sep">·</span> Jan 2025 – Present <span class="dot-sep">·</span> Chicago, IL</p>
+                            </header>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="block" id="skills">
+                    <div class="cmd-line">
+                        <span class="prompt">$</span> <span class="cmd">cat skills.txt</span>
+                    </div>
+                    <div class="output skills">
+                        <div class="skill-row">
+                            <span class="skill-key">languages          </span>
+                            <span class="skill-val">Python · C · C++ · Rust · Java · R · JavaScript · HTML/CSS · Tcl/Tk</span>
+                        </div>
+                        <div class="skill-row">
+                            <span class="skill-key">frameworks &amp; tools </span>
+                            <span class="skill-val">Flask · Node.js · Nest.js · Streamlit · Git · Azure · GCP · Firebase</span>
+                        </div>
+                        <div class="skill-row">
+                            <span class="skill-key">data &amp; platforms   </span>
+                            <span class="skill-val">Azure SQL · Databricks · MongoDB · Elasticsearch · OpenAI APIs · Vertex AI</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="block" id="contact">
+                    <div class="cmd-line">
+                        <span class="prompt">$</span> <span class="cmd">cat contact.md</span>
+                    </div>
+                    <div class="output contact-list">
+                        <a href="mailto:efeucer@uchicago.edu" class="contact-row">
+                            <span class="contact-key">email</span>
+                            <span class="contact-arrow">→</span>
+                            <span class="contact-val">efeucer@uchicago.edu</span>
+                        </a>
+                        <a href="https://github.com/efe-u" target="_blank" rel="noopener" class="contact-row">
+                            <span class="contact-key">github</span>
+                            <span class="contact-arrow">→</span>
+                            <span class="contact-val">github.com/efe-u</span>
+                        </a>
+                        <a href="https://www.linkedin.com/in/nusret-efe-ucer-868296243/" target="_blank" rel="noopener" class="contact-row">
+                            <span class="contact-key">linkedin</span>
+                            <span class="contact-arrow">→</span>
+                            <span class="contact-val">linkedin.com/in/nusret-efe-ucer</span>
+                        </a>
+                        <a href="resume.pdf" target="_blank" rel="noopener" class="contact-row">
+                            <span class="contact-key">resume</span>
+                            <span class="contact-arrow">→</span>
+                            <span class="contact-val">resume.pdf</span>
+                        </a>
+                        <div class="contact-row contact-row--static">
+                            <span class="contact-key">location</span>
+                            <span class="contact-arrow">→</span>
+                            <span class="contact-val contact-val--plain">Chicago, IL</span>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="window-foot muted">
+                    <span>built by Nusret Efe Ucer</span>
+                    <span class="dot-sep">·</span>
+                    <span>last updated 2026</span>
+                </footer>
+            </main>
+        </div>
     </div>
 
     <script src="script.js"></script>
